@@ -25,10 +25,11 @@ SC_MODULE(MutationModule) {
 			for (int j = 0; j < SOLUTION_SIZE; j++) {
 
 				if (u_dist(m_Eng) <= MUTATION_PROB) {
-					double a = population_in[i][j]->read() + m_DevTable[i][j] * n_dist(m_Eng);
-					population[i][j] = a;
-					double b = std::exp(stddev_norm_value - n_dist(m_Eng));
-					m_DevTable[i][j] *= b;
+					population[i][j] = population_in[i][j]->read() + m_DevTable[i][j] * n_dist(m_Eng);
+					m_DevTable[i][j] *= std::exp(stddev_norm_value - n_dist(m_Eng));
+				}
+				else {
+					population[i][j] = population_in[i][j]->read();
 				}
 			}
 		}
