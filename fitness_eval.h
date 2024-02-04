@@ -24,6 +24,11 @@ SC_MODULE(FitnessEvaluator) {
             if (total_weight[i] > MAX_SIZE) {
                 total_value[i] = 0.0;
             }
+            for (int j = 0; j < SOLUTION_SIZE; j++) {
+                if (solution_in[i][j] > 1.0) {
+                    total_value[i] = 0.0;
+                }
+            }
         }
 
         for (int i = 0; i < NEW_POPULATION; i++) {
