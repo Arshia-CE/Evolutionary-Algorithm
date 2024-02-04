@@ -4,12 +4,15 @@
 #include "macros.h"
 #include <iostream>
 #include <set>
+#include <cstdlib>
+
 
 SC_MODULE(ReproductionModule) {
     
     sc_in<double> population_in[NEW_POPULATION][SOLUTION_SIZE];
     
     sc_out<double> reproduced_population_out[ADDED_CHILDREN][SOLUTION_SIZE];
+    sc_out<int> index;
 
 
     void reproduce() {
@@ -27,6 +30,8 @@ SC_MODULE(ReproductionModule) {
             }
             k++;
         }
+
+        index.write(rand() % SOLUTION_SIZE);
     }
 
     SC_CTOR(ReproductionModule) {

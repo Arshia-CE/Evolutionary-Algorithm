@@ -9,7 +9,6 @@ SC_MODULE(FitnessEvaluator) {
     sc_in<double> values_in[SOLUTION_SIZE];
 
     sc_out<double> total_value_out[NEW_POPULATION];
-    sc_out<double> total_weight_out[NEW_POPULATION];
 
     
     void evaluate_solution() {
@@ -33,7 +32,6 @@ SC_MODULE(FitnessEvaluator) {
 
         for (int i = 0; i < NEW_POPULATION; i++) {
             total_value_out[i].write(total_value[i]);
-            total_weight_out[i].write(total_weight[i]);
         }
 
     }
