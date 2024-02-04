@@ -1,3 +1,5 @@
+#pragma once
+
 #include <systemc.h>
 #include "macros.h"
 
@@ -33,8 +35,8 @@ SC_MODULE(FitnessEvaluator) {
 
     SC_CTOR(FitnessEvaluator) {
         SC_METHOD(evaluate_solution);
-        for (int i = 0; i < SOLUTION_SIZE; i++) {
-            for (int j = 0; j < NEW_POPULATION; j++) {
+        for (int i = 0; i < NEW_POPULATION; i++) {
+            for (int j = 0; j < POPULATION_SIZE; j++) {
                 sensitive << weights_in[i] << values_in[i] << solution_in[i][j];
             }
         }
