@@ -8,6 +8,7 @@
 #include "fitness_eval.h"
 #include "mutation_module.h"
 #include "driver.h"
+#include "monitor.h"
 
 SC_MODULE(EvolutionaryAlgorithm) {
     
@@ -29,6 +30,7 @@ SC_MODULE(EvolutionaryAlgorithm) {
     FitnessEvaluator *fitness_evaluator;
     PopulationInitializer *population_initializer;
     MutationModule *mutation_module;
+    EvolutionaryAlgorithmMonitor *monitor;
 
     const int max_iter = 5;
     double best_solution_value = 0.0;
@@ -75,6 +77,8 @@ SC_MODULE(EvolutionaryAlgorithm) {
         fitness_evaluator = new FitnessEvaluator("fitness_evaluator");
         population_initializer = new PopulationInitializer("population_initializer");
         mutation_module = new MutationModule("mutation_module");
+        monitor = new EvolutionaryAlgorithmMonitor("monitor");
+
 
         //initializer
         for (int i = 0; i < POPULATION_SIZE; i++) {
@@ -162,6 +166,30 @@ SC_MODULE(EvolutionaryAlgorithm) {
             }
         }
         
+        //connect monitor
+        for (int i = 0; i < SOLUTION_SIZE; ++i) {
+            monitor->best_solution[i](best_solution[i]);
+        }
+
+        for (int i = 0; i < NEW_POPULATION; ++i) {
+            monitor->total_value_out_fitness[i](total_value_out_fitness[i]);
+            for (int j = 0; j < SOLUTION_SIZE; ++j) {
+                monitor->selected_population[i][j](selected_population[i][j]);
+                monitor->population_in_fitness[i][j](population_in_fitness[i][j]);
+            }
+        }
+
+        for (int i = 0; i < ADDED_CHILDREN; ++i) {
+            for (int j = 0; j < SOLUTION_SIZE; ++j) {
+                monitor->reproduced_population[i][j](reproduced_population[i][j]);
+            }
+        }
+        
+        for (int i = POPULATION_SIZE; i < NEW_POPULATION; ++i) {
+            for (int j = 0; j < SOLUTION_SIZE; ++j) {
+                monitor->crossover_children[i-POPULATION_SIZE][j](selected_population[i][j]);
+            }
+        }        
     }
 };
 
