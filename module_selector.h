@@ -13,7 +13,10 @@ SC_MODULE(ModuleSelector) {
 	void on_clk() {
 		if (!n_en_in->read()) {
 			for (int i = 0; i < MODULE_COUNT; i++) {
-				sel_out->write(i == sel);
+				if (i == sel)
+					sel_out[i]->write(1);
+				else
+					sel_out[i]->write(0);
 			}
 			sel++;
 			if (sel == MODULE_COUNT) {

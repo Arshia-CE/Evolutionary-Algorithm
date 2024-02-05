@@ -15,6 +15,7 @@ SC_MODULE(MutationModule) {
 	sc_out<double> population_mutated_out[NEW_POPULATION][SOLUTION_SIZE];
 
 	void mutate() {
+		wait(1);
 		std::normal_distribution<double> n_dist(0.0, 1.0);
 		std::uniform_real_distribution<double> u_dist(0.0, 1.0);
 
@@ -45,6 +46,8 @@ SC_MODULE(MutationModule) {
 	}
 
 	SC_CTOR(MutationModule) {
+		m_Eng = std::mt19937(m_RandomDevice());
+
 		for (int i = 0; i < NEW_POPULATION; i++) {
 			for (int j = 0; j < SOLUTION_SIZE; j++) {
 				m_DevTable[i][j] = 10.0;
@@ -58,5 +61,6 @@ SC_MODULE(MutationModule) {
 private:
 	double m_DevTable[NEW_POPULATION][SOLUTION_SIZE] = { 1.0 };
 
-	std::default_random_engine m_Eng; // Maybe change engine for better results?
+	std::random_device m_RandomDevice;
+	std::mt19937 m_Eng;
 };

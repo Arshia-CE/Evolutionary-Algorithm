@@ -52,7 +52,7 @@ SC_MODULE(FitnessEvaluator) {
         for (int i = 0; i < NEW_POPULATION; i++) {
             if (total_weight[i] > MAX_SIZE) {
                 total_value[i] = 0.0;
-                }
+            }
         }
 
 

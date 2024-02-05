@@ -27,7 +27,7 @@ int sc_main(int argc, char* argv[]) {
 
     evolutionary_algorithm.main_clk(main_clk);
     
-    sc_start();
+    sc_start(10, SC_SEC);
 
     cout << "Best Solution: ";
     for (int i = 0; i < SOLUTION_SIZE; ++i) {

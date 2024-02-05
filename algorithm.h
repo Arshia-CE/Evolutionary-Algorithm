@@ -30,6 +30,7 @@ SC_MODULE(EvolutionaryAlgorithm) {
     sc_signal<double> reproduced_population[ADDED_CHILDREN][SOLUTION_SIZE];
     sc_signal<int> index_signal;
     sc_signal<bool> en;
+    sc_signal<bool> sel_clk;
     sc_signal<bool> clk[MODULE_COUNT];
 
 
@@ -42,13 +43,8 @@ SC_MODULE(EvolutionaryAlgorithm) {
     EvolutionaryAlgorithmMonitor *monitor;
     ModuleSelector* selector;
 
-    const int max_iter = 5;
-    double best_solution_value = 0.0;
-    double best_solution_internal[SOLUTION_SIZE] = {};
-    int iter = 0;
-
     void kill_algorithm() {
-        if (iter < max_iter){ 
+        if (iter < max_iter || total_iter < 5){ 
             //reproduction in
             for (int i = 0; i < POPULATION_SIZE; i++) {
                 for (int j = 0; j < SOLUTION_SIZE; j++) {
@@ -77,7 +73,11 @@ SC_MODULE(EvolutionaryAlgorithm) {
             }
             en.write(1);
         }
+        total_iter++;
+    }
 
+    void on_clk() {
+        sel_clk.write(main_clk.read());
     }
 
     SC_CTOR(EvolutionaryAlgorithm) {
@@ -96,7 +96,7 @@ SC_MODULE(EvolutionaryAlgorithm) {
         for (int i = 0; i < MODULE_COUNT; i++){
             selector->sel_out[i](clk[i]);
         }
-        selector->clk_in(main_clk);
+        selector->clk_in(sel_clk);
         selector->n_en_in(en);
 
         
@@ -230,7 +230,17 @@ SC_MODULE(EvolutionaryAlgorithm) {
         }       
 
         SC_METHOD(kill_algorithm);
-        sensitive << clk[3]; 
+        sensitive << clk[3];
+
+        SC_METHOD(on_clk);
+        sensitive << main_clk;
     }
+
+private:
+	const int max_iter = 5;
+	double best_solution_value = 0.0;
+	double best_solution_internal[SOLUTION_SIZE] = {};
+	int iter = 0;
+    unsigned long total_iter = 0;
 };
 
