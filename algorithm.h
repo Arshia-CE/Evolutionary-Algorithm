@@ -44,7 +44,7 @@ SC_MODULE(EvolutionaryAlgorithm) {
     void kill_algorithm() {
         if (iter < max_iter){ 
             //reproduction in
-            for (int i = 0; i < NEW_POPULATION; i++) {
+            for (int i = 0; i < POPULATION_SIZE; i++) {
                 for (int j = 0; j < SOLUTION_SIZE; j++) {
                     reproduced_in[i][j].write(selected_population[i][j]);
                 }
