@@ -21,6 +21,7 @@ SC_MODULE(EvolutionaryAlgorithm) {
     sc_signal<double , SC_MANY_WRITERS> population_in_fitness[NEW_POPULATION][SOLUTION_SIZE];
     sc_signal<double> total_value_out_fitness[NEW_POPULATION];
     sc_signal<double , SC_MANY_WRITERS> selected_population[NEW_POPULATION][SOLUTION_SIZE];
+    sc_signal<double> reproduced_in[NEW_POPULATION][SOLUTION_SIZE];
     sc_signal<double> reproduced_population[ADDED_CHILDREN][SOLUTION_SIZE];
     sc_signal<int> index_signal;
 
@@ -43,7 +44,7 @@ SC_MODULE(EvolutionaryAlgorithm) {
             //reproduction in
             for (int i = 0; i < NEW_POPULATION; i++) {
                 for (int j = 0; j < SOLUTION_SIZE; j++) {
-                    reproduction_module->population_in[i][j](selected_population[i][j]);
+                    reproduced_in[i][j].write(selected_population[i][j]);
                 }
             }
 
@@ -121,6 +122,12 @@ SC_MODULE(EvolutionaryAlgorithm) {
             }
         }
 
+        //reproduction in
+        for (int i = 0; i < NEW_POPULATION; i++) {
+            for (int j = 0; j < SOLUTION_SIZE; j++) {
+                reproduction_module->population_in[i][j](reproduced_in[i][j]);
+            }
+        }
 
 
         //reproduction out
