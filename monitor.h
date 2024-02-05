@@ -18,9 +18,8 @@ SC_MODULE(EvolutionaryAlgorithmMonitor) {
           //sensitive << best_solution[i];
         //}
         for (int i = 0; i < NEW_POPULATION; i++) {
-          sensitive << total_value_out_fitness[i];
             for (int j = 0; j < SOLUTION_SIZE; j++) {
-              sensitive << selected_population[i][j] << population_in_fitness[i][j];
+              sensitive << selected_population[i][j] ;
            }
         }
         //for (int i = 0; i < ADDED_CHILDREN; i++) {
@@ -31,11 +30,6 @@ SC_MODULE(EvolutionaryAlgorithmMonitor) {
     }
 
     void monitor() {
-        cout << "Best Solution: ";
-        for (int i = 0; i < SOLUTION_SIZE; ++i) {
-            cout << best_solution[i].read() << " ";
-        }
-        cout << endl;
         
         cout << "Total Value Out Fitness: " << endl;
         for (int i = 0; i < NEW_POPULATION; ++i) {

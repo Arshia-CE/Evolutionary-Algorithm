@@ -42,8 +42,8 @@ SC_MODULE(FitnessEvaluator) {
 
         for (int i = 0; i < NEW_POPULATION; i++) {
             for (int j = 0; j < SOLUTION_SIZE; j++) {
-                total_value[i] += values_in[j]->read() * solution_in[i][j]->read();
-                total_weight[i] += weights_in[j]->read() * solution_in[i][j]->read();
+                total_value[i] += values_in[j]->read() * population_temp[i][j];
+                total_weight[i] += weights_in[j]->read() * population_temp[i][j];
             }
 
         }

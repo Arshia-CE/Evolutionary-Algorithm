@@ -15,7 +15,7 @@ SC_MODULE(MutationModule) {
 	sc_out<double> population_mutated_out[NEW_POPULATION][SOLUTION_SIZE];
 
 	void mutate() {
-		wait(1);
+		wait(2);
 		std::normal_distribution<double> n_dist(0.0, 1.0);
 		std::uniform_real_distribution<double> u_dist(0.0, 1.0);
 
