@@ -1,6 +1,7 @@
 #pragma once
 
 #include <systemc.h>
+#include <cmath>
 #include "mutation_module.h"
 #include "reproduce_module.h"
 #include "sorter_module.h"
@@ -46,13 +47,13 @@ SC_MODULE(EvolutionaryAlgorithm) {
                 }
             }
 
-            if (best_solution_value - total_value_out_fitness[0] < THRESHOLD && (best_solution_value - total_value_out_fitness[0]) > 0) {
+            if (abs(best_solution_value - total_value_out_fitness[0]) < THRESHOLD) {
                 iter++;
             }
-            else if (best_solution_value - total_value_out_fitness[0] > THRESHOLD) {
+            else if ((total_value_out_fitness[0] - best_solution_value) > THRESHOLD) {
                 iter = 0;
                 for (int j = 0; j < SOLUTION_SIZE; j++) {
-                    best_solution_internal[j] = selected_population[0][j];
+                    best_solution_internal[j] = selected_population[0][j].read();
                 }
                 best_solution_value = total_value_out_fitness[0];
             }
