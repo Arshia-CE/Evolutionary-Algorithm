@@ -54,5 +54,11 @@ SC_MODULE(SelectionModule) {
 
     SC_CTOR(SelectionModule) {
         SC_METHOD(select_best_individuals);
+        for (int i = 0; i < NEW_POPULATION; i++) {
+            sensitive << total_value_in[i];
+            for (int j = 0; j < SOLUTION_SIZE; j++) {
+                sensitive << population_in[i][j];
+            }
+        }
     }
 };

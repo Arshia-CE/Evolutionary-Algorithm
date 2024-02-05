@@ -36,8 +36,11 @@ SC_MODULE(ReproductionModule) {
 
     SC_CTOR(ReproductionModule) {
         SC_METHOD(reproduce);
-        sensitive << population_in[0][0];
-            
+        for (int i = 0; i < NEW_POPULATION; i++) {
+            for (int j = 0; j < SOLUTION_SIZE; j++) {
+                sensitive << population_in[i][j];
+            }
+        }
     }
 };
 

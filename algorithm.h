@@ -83,7 +83,7 @@ SC_MODULE(EvolutionaryAlgorithm) {
 
 
         //initializer
-        for (int i = 0; i < POPULATION_SIZE; i++) {
+        for (int i = 0; i < NEW_POPULATION; i++) {
             for (int j = 0; j < SOLUTION_SIZE; j++) {
                 population_initializer->population_out[i][j](population_in_fitness[i][j]);
             }
@@ -198,6 +198,12 @@ SC_MODULE(EvolutionaryAlgorithm) {
                 monitor->crossover_children[i-POPULATION_SIZE][j](selected_population[i][j]);
             }
         }        
+        SC_METHOD(kill_algorithm);
+        for (int i = 0; i < NEW_POPULATION; i++) {
+            for (int j = 0; j < SOLUTION_SIZE; j++) {
+               sensitive << selected_population[i][j];
+            }
+        }
     }
 };
 

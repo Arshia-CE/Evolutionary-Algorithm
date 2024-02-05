@@ -27,8 +27,9 @@ SC_MODULE(CrossoverModule) {
 
     SC_CTOR(CrossoverModule) {
         SC_METHOD(perform_crossover);
+        sensitive << crossover_point_in;
         for (int i = 0; i < SOLUTION_SIZE; i++) {
-            sensitive << parent2_in[i] << parent1_in[i] << crossover_point_in;
+            sensitive << parent2_in[i] << parent1_in[i];
         }
     }
 };

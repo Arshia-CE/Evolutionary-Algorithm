@@ -13,8 +13,20 @@ SC_MODULE(EvolutionaryAlgorithmMonitor) {
 
     SC_CTOR(EvolutionaryAlgorithmMonitor) {
         SC_METHOD(monitor);
-        sensitive << best_solution[0] << total_value_out_fitness[0] << selected_population[0][0]
-            << reproduced_population[0][0] << crossover_children[0][0] << population_in_fitness[0][0];
+        for (int i = 0;  i < SOLUTION_SIZE;  i++){
+          sensitive << best_solution[i];
+        }
+        //for (int i = 0; i < NEW_POPULATION; i++) {
+          //  sensitive << total_value_out_fitness[i];
+            //for (int j = 0; j < SOLUTION_SIZE; j++) {
+              //  sensitive << selected_population[i][j] << population_in_fitness[i][j];
+           // }
+//        }
+        //for (int i = 0; i < ADDED_CHILDREN; i++) {
+            //for (int j = 0; j < SOLUTION_SIZE; j++) {
+            //    sensitive << reproduced_population[i][j] << crossover_children[i][j];
+          //  }
+        //}
     }
 
     void monitor() {
@@ -26,41 +38,37 @@ SC_MODULE(EvolutionaryAlgorithmMonitor) {
 
         cout << "Total Value Out Fitness: " << total_value_out_fitness[0].read() << endl;
 
-        cout << "Selected Population: ";
+        cout << "Selected Population: " << endl;
         for (int i = 0; i < NEW_POPULATION; ++i) {
             for (int j = 0; j < SOLUTION_SIZE; ++j) {
                 cout << selected_population[i][j].read() << " ";
             }
-            cout << "| ";
+            cout << endl;
         }
-        cout << endl;
 
-        cout << "Reproduced Population: ";
+        cout << "Reproduced Population: " << endl;
         for (int i = 0; i < ADDED_CHILDREN; ++i) {
             for (int j = 0; j < SOLUTION_SIZE; ++j) {
                 cout << reproduced_population[i][j].read() << " ";
             }
-            cout << "| ";
+            cout << endl;
         }
-        cout << endl;
 
-        cout << "Crossover Children: ";
+        cout << "Crossover Children: " << endl;
         for (int i = 0; i < ADDED_CHILDREN; ++i) {
             for (int j = 0; j < SOLUTION_SIZE; ++j) {
                 cout << crossover_children[i][j].read() << " ";
             }
-            cout << "| ";
+            cout << endl;
         }
-        cout << endl;
 
-        cout << "Population In Fitness: ";
+        cout << "Population In Fitness: " << endl;
         for (int i = 0; i < NEW_POPULATION; ++i) {
             for (int j = 0; j < SOLUTION_SIZE; ++j) {
                 cout << population_in_fitness[i][j].read() << " ";
             }
-            cout << "| ";
+            cout << endl;
         }
-        cout << endl;
 
         cout << "------------------------" << endl;
     }
