@@ -13,15 +13,15 @@ SC_MODULE(EvolutionaryAlgorithmMonitor) {
 
     SC_CTOR(EvolutionaryAlgorithmMonitor) {
         SC_METHOD(monitor);
-        for (int i = 0;  i < SOLUTION_SIZE;  i++){
-          sensitive << best_solution[i];
+        //for (int i = 0;  i < SOLUTION_SIZE;  i++){
+          //sensitive << best_solution[i];
+        //}
+        for (int i = 0; i < NEW_POPULATION; i++) {
+          sensitive << total_value_out_fitness[i];
+            for (int j = 0; j < SOLUTION_SIZE; j++) {
+              sensitive << selected_population[i][j] << population_in_fitness[i][j];
+           }
         }
-        //for (int i = 0; i < NEW_POPULATION; i++) {
-          //  sensitive << total_value_out_fitness[i];
-            //for (int j = 0; j < SOLUTION_SIZE; j++) {
-              //  sensitive << selected_population[i][j] << population_in_fitness[i][j];
-           // }
-//        }
         //for (int i = 0; i < ADDED_CHILDREN; i++) {
             //for (int j = 0; j < SOLUTION_SIZE; j++) {
             //    sensitive << reproduced_population[i][j] << crossover_children[i][j];

@@ -5,9 +5,10 @@
 
 SC_MODULE(SelectionModule) {
     sc_in<double> population_in[NEW_POPULATION][SOLUTION_SIZE];
-    sc_inout<double> total_value_in[NEW_POPULATION];
+    sc_in<double> total_value_in[NEW_POPULATION];
     
     sc_out<double> selected_population_out[NEW_POPULATION][SOLUTION_SIZE];
+    sc_out<double> total_value_out[NEW_POPULATION];
 
     void select_best_individuals() {
 
@@ -45,7 +46,7 @@ SC_MODULE(SelectionModule) {
         }
 
         for (int i = 0; i < NEW_POPULATION; i++) {
-            total_value_in[i].write(value_temp[i]);
+            total_value_out[i].write(value_temp[i]);
             for (int j = 0; j < SOLUTION_SIZE; j++) {
                 selected_population_out[i][j].write(population_temp[i][j]);
             }
