@@ -52,20 +52,18 @@ SC_MODULE(EvolutionaryAlgorithm) {
                 }
             }
 
-
-            if (abs(best_solution_value - total_value_out_sorter[0]) < THRESHOLD) {
+            double x = total_value_out_sorter[0].read();
+            if (abs(best_solution_value - x) < THRESHOLD) {
                 iter++;
+                best_solution_value = x;
             }
-            else if ((total_value_out_sorter[0] - best_solution_value) > THRESHOLD) {
+            else if (abs(x - best_solution_value) >= THRESHOLD) {
                 iter = 0;
                 for (int j = 0; j < SOLUTION_SIZE; j++) {
                     best_solution_internal[j] = selected_population[0][j].read();
                 }
-                best_solution_value = total_value_out_sorter[0];
-            }
-            else {
-                iter = 0 ;
-            }            
+                best_solution_value = x;
+            }     
         }
         else {
             for (int j = 0; j < SOLUTION_SIZE; j++) {
