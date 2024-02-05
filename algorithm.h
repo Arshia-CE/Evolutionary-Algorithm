@@ -24,6 +24,7 @@ SC_MODULE(EvolutionaryAlgorithm) {
     sc_signal<double , SC_MANY_WRITERS> selected_population[NEW_POPULATION][SOLUTION_SIZE];
     sc_signal<double> reproduced_in[NEW_POPULATION][SOLUTION_SIZE];
     sc_signal<double> reproduced_population[ADDED_CHILDREN][SOLUTION_SIZE];
+    sc_signal<double> crossover_out[ADDED_CHILDREN][SOLUTION_SIZE];
     sc_signal<int> index_signal;
 
 
@@ -46,6 +47,12 @@ SC_MODULE(EvolutionaryAlgorithm) {
             for (int i = 0; i < NEW_POPULATION; i++) {
                 for (int j = 0; j < SOLUTION_SIZE; j++) {
                     reproduced_in[i][j].write(selected_population[i][j]);
+                }
+            }
+            //crossover out
+            for (int i = 0; i < ADDED_CHILDREN ; i ++) {
+                for (int j = 0; j < SOLUTION_SIZE; j++) {
+                    crossover_out[i][j].write(selected_population[i + POPULATION_SIZE][j]);
                 }
             }
 
@@ -153,13 +160,11 @@ SC_MODULE(EvolutionaryAlgorithm) {
         
 
         //crossover out
-        int k = POPULATION_SIZE;
         for (int i = 0; i < ADDED_CHILDREN - 1; i = i + 2) {
             for (int j = 0; j < SOLUTION_SIZE; j++) {
-                crossover_module[i / 2]->child1_out[j](selected_population[k][j]);
-                crossover_module[i / 2]->child2_out[j](selected_population[k + 1][j]);
+                crossover_module[i / 2]->child1_out[j](crossover_out[i][j]);
+                crossover_module[i / 2]->child2_out[j](crossover_out[i + 1][j]);
             }
-            k+=2;
         }
 
         //mutation in
@@ -182,7 +187,7 @@ SC_MODULE(EvolutionaryAlgorithm) {
         }
 
         for (int i = 0; i < NEW_POPULATION; ++i) {
-            monitor->total_value_out_fitness[i](total_value_out_fitness[i]);
+            monitor -> total_value_out_fitness[i](total_value_out_fitness[i]);
             monitor -> total_value_out_sorter[i](total_value_out_sorter[i]);
             for (int j = 0; j < SOLUTION_SIZE; ++j) {
                 monitor->selected_population[i][j](selected_population[i][j]);
@@ -200,7 +205,8 @@ SC_MODULE(EvolutionaryAlgorithm) {
             for (int j = 0; j < SOLUTION_SIZE; ++j) {
                 monitor->crossover_children[i-POPULATION_SIZE][j](selected_population[i][j]);
             }
-        }        
+        }       
+
         SC_METHOD(kill_algorithm);
         for (int i = 0; i < NEW_POPULATION; i++) {
             for (int j = 0; j < SOLUTION_SIZE; j++) {

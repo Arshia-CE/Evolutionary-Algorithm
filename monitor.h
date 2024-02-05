@@ -38,7 +38,7 @@ SC_MODULE(EvolutionaryAlgorithmMonitor) {
         cout << endl;
         
         cout << "Total Value Out Fitness: " << endl;
-        for (int i = 0; i < ADDED_CHILDREN; ++i) {
+        for (int i = 0; i < NEW_POPULATION; ++i) {
             cout << total_value_out_fitness[i].read() << " ";
         }
         cout << endl;

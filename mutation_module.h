@@ -45,7 +45,7 @@ SC_MODULE(MutationModule) {
 	SC_CTOR(MutationModule) {
 		for (int i = 0; i < NEW_POPULATION; i++) {
 			for (int j = 0; j < SOLUTION_SIZE; j++) {
-				m_DevTable[i][j] = 1.0;
+				m_DevTable[i][j] = 0.1;
 			}
 		}
 
