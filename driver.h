@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <systemc.h>
 #include <cstdlib>
 #include <iostream>

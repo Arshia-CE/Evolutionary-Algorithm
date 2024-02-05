@@ -6,6 +6,7 @@
 SC_MODULE(EvolutionaryAlgorithmMonitor) {
     sc_in<double> best_solution[SOLUTION_SIZE];
     sc_in<double> total_value_out_fitness[NEW_POPULATION];
+    sc_in<double> total_value_out_sorter[NEW_POPULATION];
     sc_in<double> selected_population[NEW_POPULATION][SOLUTION_SIZE];
     sc_in<double> reproduced_population[ADDED_CHILDREN][SOLUTION_SIZE];
     sc_in<double> crossover_children[ADDED_CHILDREN][SOLUTION_SIZE];
@@ -35,15 +36,19 @@ SC_MODULE(EvolutionaryAlgorithmMonitor) {
             cout << best_solution[i].read() << " ";
         }
         cout << endl;
-
-        cout << "Total Value Out Fitness: " << total_value_out_fitness[0].read() << endl;
-
+        
+        cout << "Total Value Out Fitness: " << endl;
+        for (int i = 0; i < ADDED_CHILDREN; ++i) {
+            cout << total_value_out_fitness[i].read() << " ";
+        }
+        cout << endl;
+          
         cout << "Selected Population: " << endl;
         for (int i = 0; i < NEW_POPULATION; ++i) {
             for (int j = 0; j < SOLUTION_SIZE; ++j) {
                 cout << selected_population[i][j].read() << " ";
             }
-            cout << endl;
+            cout << "| Total Value After Sorting: " << total_value_out_sorter[i].read() << endl;
         }
 
         cout << "Reproduced Population: " << endl;

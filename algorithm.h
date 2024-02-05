@@ -183,6 +183,7 @@ SC_MODULE(EvolutionaryAlgorithm) {
 
         for (int i = 0; i < NEW_POPULATION; ++i) {
             monitor->total_value_out_fitness[i](total_value_out_fitness[i]);
+            monitor -> total_value_out_sorter[i](total_value_out_sorter[i]);
             for (int j = 0; j < SOLUTION_SIZE; ++j) {
                 monitor->selected_population[i][j](selected_population[i][j]);
                 monitor->population_in_fitness[i][j](population_in_fitness[i][j]);
