@@ -1,7 +1,23 @@
+#define ASIO_STANDALONE
+#include <asio.hpp>
 #include <systemc.h>
 #include "algorithm.h"
 
+using namespace asio;
+using ip::tcp;
+
+tcp::socket* my_soc;
+
 int sc_main(int argc, char* argv[]) {
+
+	io_service io_tcp;
+
+	// Create a TCP acceptor
+	tcp::acceptor acceptor(io_tcp, tcp::endpoint(tcp::v4(), 12345));
+
+	// Accept connection
+	my_soc = new tcp::socket(io_tcp);
+	acceptor.accept(*my_soc);
 
     sc_clock main_clk("main_clk", 1, SC_MS); 
 

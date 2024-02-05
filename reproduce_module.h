@@ -1,4 +1,11 @@
 #pragma once
+#define ASIO_STANDALONE
+#include <asio.hpp>
+
+using namespace asio;
+using ip::tcp;
+
+extern tcp::socket* my_soc;
 
 #include <systemc.h>
 #include "macros.h"
@@ -18,27 +25,51 @@ SC_MODULE(ReproductionModule) {
 
 
     void reproduce() {
-        
-        std::set<int> indexes;
 
-        while (indexes.size() < ADDED_CHILDREN){
-            indexes.insert(rand() % POPULATION_SIZE);
+        if (!m_First) {
+			for (int i = 0; i < NEW_POPULATION; i++) {
+				for (int j = 0; j < SOLUTION_SIZE; j++) {
+					double response = population_in[i][j];
+					char c[8] = {};
+					memcpy(c, &response, 8);
+
+					asio::write(*my_soc, asio::buffer(c));
+
+				}
+			}
+
+			// Receive data from MATLAB
+			for (int i = 0; i < ADDED_CHILDREN; i++) {
+				for (int j = 0; j < SOLUTION_SIZE; j++) {
+					asio::streambuf buffer;
+					asio::read(*my_soc, buffer, asio::transfer_exactly(sizeof(double)));
+					std::istream is(&buffer);
+
+					double d;
+
+					is.read((char*)(&d), 8);
+
+					reproduced_population_out[i][j] = d;
+				}
+			}
+
+			asio::streambuf buffer;
+			asio::read(*my_soc, buffer, asio::transfer_exactly(sizeof(char)));
+			std::istream is(&buffer);
+
+			char c;
+			is.read(&c, 1);
+			index.write((int)c);
         }
-
-        int k = 0;
-        for (auto i : indexes) {
-            for (int j = 0; j < SOLUTION_SIZE; j++){
-                reproduced_population_out[k][j].write(population_in[i][j]);
-            }
-            k++;
-        }
-
-        index.write(rand() % SOLUTION_SIZE);
+		m_First = false;
     }
 
     SC_CTOR(ReproductionModule) {
         SC_METHOD(reproduce);
         sensitive << clk.pos();
     }
+
+private:
+	bool m_First = true;
 };
 

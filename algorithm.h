@@ -81,6 +81,7 @@ SC_MODULE(EvolutionaryAlgorithm) {
     }
 
     SC_CTOR(EvolutionaryAlgorithm) {
+
         selection_module = new SelectionModule("selection_module");
         reproduction_module = new ReproductionModule("reproduction_module");
         for (int i = 0; i < MUTATION_MODULES; i++) {
