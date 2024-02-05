@@ -45,6 +45,7 @@ SC_MODULE(SelectionModule) {
             value_temp[i] = 0.0;
         }
 
+
         for (int i = 0; i < NEW_POPULATION; i++) {
             total_value_out[i].write(value_temp[i]);
             for (int j = 0; j < SOLUTION_SIZE; j++) {

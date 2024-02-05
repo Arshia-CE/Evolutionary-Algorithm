@@ -22,9 +22,9 @@ SC_MODULE(EvolutionaryAlgorithm) {
     sc_signal<double> total_value_out_fitness[NEW_POPULATION];
     sc_signal<double> total_value_out_sorter[NEW_POPULATION];
     sc_signal<double , SC_MANY_WRITERS> selected_population[NEW_POPULATION][SOLUTION_SIZE];
+    sc_signal<double> sorter_in[NEW_POPULATION][SOLUTION_SIZE];
     sc_signal<double> reproduced_in[NEW_POPULATION][SOLUTION_SIZE];
     sc_signal<double> reproduced_population[ADDED_CHILDREN][SOLUTION_SIZE];
-    sc_signal<double> crossover_out[ADDED_CHILDREN][SOLUTION_SIZE];
     sc_signal<int> index_signal;
 
 
@@ -49,12 +49,7 @@ SC_MODULE(EvolutionaryAlgorithm) {
                     reproduced_in[i][j].write(selected_population[i][j]);
                 }
             }
-            //crossover out
-            for (int i = 0; i < ADDED_CHILDREN ; i ++) {
-                for (int j = 0; j < SOLUTION_SIZE; j++) {
-                    crossover_out[i][j].write(selected_population[i + POPULATION_SIZE][j]);
-                }
-            }
+
 
             if (abs(best_solution_value - total_value_out_sorter[0]) < THRESHOLD) {
                 iter++;
@@ -113,14 +108,18 @@ SC_MODULE(EvolutionaryAlgorithm) {
         for (int i = 0; i < NEW_POPULATION; i++) {
             fitness_evaluator->total_value_out[i](total_value_out_fitness[i]);
         }
-
+        for (int i = 0; i < NEW_POPULATION; i++) {
+            for (int j = 0; j < SOLUTION_SIZE; j++) {
+                fitness_evaluator->solution_out[i][j](sorter_in[i][j]);
+            }
+        }
         //sorter in
         for (int i = 0; i < NEW_POPULATION; i++) {
             selection_module->total_value_in[i](total_value_out_fitness[i]);
         }
         for (int i = 0; i < NEW_POPULATION; i++) {
             for (int j = 0; j < SOLUTION_SIZE; j++) {
-                selection_module->population_in[i][j](population_in_fitness[i][j]);
+                selection_module->population_in[i][j](sorter_in[i][j]);
             }
         }
         //sorter out
@@ -162,15 +161,15 @@ SC_MODULE(EvolutionaryAlgorithm) {
         //crossover out
         for (int i = 0; i < ADDED_CHILDREN - 1; i = i + 2) {
             for (int j = 0; j < SOLUTION_SIZE; j++) {
-                crossover_module[i / 2]->child1_out[j](crossover_out[i][j]);
-                crossover_module[i / 2]->child2_out[j](crossover_out[i + 1][j]);
+                crossover_module[i / 2]->child1_out[j](reproduced_in[i + POPULATION_SIZE][j]);
+                crossover_module[i / 2]->child2_out[j](reproduced_in[i + POPULATION_SIZE + 1][j]);
             }
         }
 
         //mutation in
         for (int i = 0; i < NEW_POPULATION; i++) {
             for (int j = 0; j < SOLUTION_SIZE; j++) {
-                mutation_module->population_in[i][j](selected_population[i][j]);
+                mutation_module->population_in[i][j](reproduced_in[i][j]);
             }
         }
         
@@ -190,7 +189,7 @@ SC_MODULE(EvolutionaryAlgorithm) {
             monitor -> total_value_out_fitness[i](total_value_out_fitness[i]);
             monitor -> total_value_out_sorter[i](total_value_out_sorter[i]);
             for (int j = 0; j < SOLUTION_SIZE; ++j) {
-                monitor->selected_population[i][j](selected_population[i][j]);
+                monitor->selected_population[i][j](reproduced_in[i][j]);
                 monitor->population_in_fitness[i][j](population_in_fitness[i][j]);
             }
         }
@@ -203,7 +202,7 @@ SC_MODULE(EvolutionaryAlgorithm) {
         
         for (int i = POPULATION_SIZE; i < NEW_POPULATION; ++i) {
             for (int j = 0; j < SOLUTION_SIZE; ++j) {
-                monitor->crossover_children[i-POPULATION_SIZE][j](selected_population[i][j]);
+                monitor->crossover_children[i-POPULATION_SIZE][j](reproduced_in[i][j]);
             }
         }       
 
