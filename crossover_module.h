@@ -7,6 +7,10 @@ SC_MODULE(CrossoverModule) {
     sc_in<double> parent1_in[SOLUTION_SIZE];
     sc_in<double> parent2_in[SOLUTION_SIZE];
     sc_in<int> crossover_point_in; 
+
+    sc_in <bool> clk;
+
+
     sc_out<double> child1_out[SOLUTION_SIZE];
     sc_out<double> child2_out[SOLUTION_SIZE];
 
@@ -27,9 +31,6 @@ SC_MODULE(CrossoverModule) {
 
     SC_CTOR(CrossoverModule) {
         SC_METHOD(perform_crossover);
-        sensitive << crossover_point_in;
-        for (int i = 0; i < SOLUTION_SIZE; i++) {
-            sensitive << parent2_in[i] << parent1_in[i];
-        }
+        sensitive << clk.pos();
     }
 };

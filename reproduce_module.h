@@ -11,6 +11,8 @@ SC_MODULE(ReproductionModule) {
     
     sc_in<double> population_in[NEW_POPULATION][SOLUTION_SIZE];
     
+    sc_in <bool> clk;
+
     sc_out<double> reproduced_population_out[ADDED_CHILDREN][SOLUTION_SIZE];
     sc_out<int> index;
 
@@ -36,11 +38,7 @@ SC_MODULE(ReproductionModule) {
 
     SC_CTOR(ReproductionModule) {
         SC_METHOD(reproduce);
-        for (int i = 0; i < NEW_POPULATION; i++) {
-            for (int j = 0; j < SOLUTION_SIZE; j++) {
-                sensitive << population_in[i][j];
-            }
-        }
+        sensitive << clk.pos();
     }
 };
 

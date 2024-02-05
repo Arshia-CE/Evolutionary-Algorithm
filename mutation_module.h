@@ -9,10 +9,12 @@ SC_MODULE(MutationModule) {
 
 	sc_in<double> population_in[NEW_POPULATION][SOLUTION_SIZE];
 
+	sc_in <bool> clk;
+
+
 	sc_out<double> population_mutated_out[NEW_POPULATION][SOLUTION_SIZE];
 
 	void mutate() {
-		wait(1);
 		std::normal_distribution<double> n_dist(0.0, 1.0);
 		std::uniform_real_distribution<double> u_dist(0.0, 1.0);
 
@@ -50,11 +52,7 @@ SC_MODULE(MutationModule) {
 		}
 
 		SC_THREAD(mutate);
-		for (int i = 0; i < NEW_POPULATION; i++) {
-			for (int j = 0; j < SOLUTION_SIZE; j++) {
-				sensitive << population_in[i][j];
-			}
-		}
+		sensitive << clk.pos();
 	}
 
 private:

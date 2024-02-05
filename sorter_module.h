@@ -6,6 +6,8 @@
 SC_MODULE(SelectionModule) {
     sc_in<double> population_in[NEW_POPULATION][SOLUTION_SIZE];
     sc_in<double> total_value_in[NEW_POPULATION];
+
+    sc_in <bool> clk;
     
     sc_out<double> selected_population_out[NEW_POPULATION][SOLUTION_SIZE];
     sc_out<double> total_value_out[NEW_POPULATION];
@@ -56,11 +58,6 @@ SC_MODULE(SelectionModule) {
 
     SC_CTOR(SelectionModule) {
         SC_METHOD(select_best_individuals);
-        for (int i = 0; i < NEW_POPULATION; i++) {
-            sensitive << total_value_in[i];
-            for (int j = 0; j < SOLUTION_SIZE; j++) {
-                sensitive << population_in[i][j];
-            }
-        }
+        sensitive << clk.pos();
     }
 };

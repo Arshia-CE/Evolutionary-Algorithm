@@ -9,6 +9,9 @@
 
 SC_MODULE(PopulationInitializer) {
 
+    sc_in <bool> clk;
+
+
     sc_out<double> population_out[NEW_POPULATION][SOLUTION_SIZE]; 
 
     void drive() {
@@ -27,5 +30,6 @@ SC_MODULE(PopulationInitializer) {
 
     SC_CTOR(PopulationInitializer) {
         SC_THREAD(drive);
+        sensitive << clk.pos();
     }
 };

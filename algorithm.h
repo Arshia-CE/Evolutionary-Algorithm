@@ -10,11 +10,14 @@
 #include "mutation_module.h"
 #include "driver.h"
 #include "monitor.h"
+#include "module_selector.h"
 
 SC_MODULE(EvolutionaryAlgorithm) {
     
     sc_in<double> weights[SOLUTION_SIZE];
     sc_in<double> values[SOLUTION_SIZE];
+
+    sc_in<bool> main_clk;
 
     sc_out<double> best_solution[SOLUTION_SIZE];
 
@@ -26,6 +29,8 @@ SC_MODULE(EvolutionaryAlgorithm) {
     sc_signal<double> reproduced_in[NEW_POPULATION][SOLUTION_SIZE];
     sc_signal<double> reproduced_population[ADDED_CHILDREN][SOLUTION_SIZE];
     sc_signal<int> index_signal;
+    sc_signal<bool> en;
+    sc_signal<bool> clk[MODULE_COUNT];
 
 
     SelectionModule *selection_module;
@@ -35,6 +40,7 @@ SC_MODULE(EvolutionaryAlgorithm) {
     PopulationInitializer *population_initializer;
     MutationModule *mutation_module;
     EvolutionaryAlgorithmMonitor *monitor;
+    ModuleSelector* selector;
 
     const int max_iter = 5;
     double best_solution_value = 0.0;
@@ -69,6 +75,7 @@ SC_MODULE(EvolutionaryAlgorithm) {
             for (int j = 0; j < SOLUTION_SIZE; j++) {
                 best_solution[j].write(best_solution_internal[j]);
             }
+            en.write(1);
         }
 
     }
@@ -83,7 +90,16 @@ SC_MODULE(EvolutionaryAlgorithm) {
         population_initializer = new PopulationInitializer("population_initializer");
         mutation_module = new MutationModule("mutation_module");
         monitor = new EvolutionaryAlgorithmMonitor("monitor");
+        selector = new ModuleSelector("selector");
 
+        //selector
+        for (int i = 0; i < MODULE_COUNT; i++){
+            selector->sel_out[i](clk[i]);
+        }
+        selector->clk_in(main_clk);
+        selector->n_en_in(en);
+
+        
 
         //initializer
         for (int i = 0; i < NEW_POPULATION; i++) {
@@ -91,6 +107,7 @@ SC_MODULE(EvolutionaryAlgorithm) {
                 population_initializer->population_out[i][j](population_in_fitness[i][j]);
             }
         }
+        population_initializer->clk(clk[0]);
     
         //fitness in
         for (int i = 0; i < NEW_POPULATION; i++) {
@@ -102,7 +119,7 @@ SC_MODULE(EvolutionaryAlgorithm) {
             fitness_evaluator->values_in[i](values[i]);
             fitness_evaluator->weights_in[i](weights[i]);
         }
-
+        fitness_evaluator->clk(clk[1]);
 
         //fitness out
         for (int i = 0; i < NEW_POPULATION; i++) {
@@ -122,6 +139,8 @@ SC_MODULE(EvolutionaryAlgorithm) {
                 selection_module->population_in[i][j](sorter_in[i][j]);
             }
         }
+        selection_module->clk(clk[2]);
+
         //sorter out
         for (int i = 0; i < NEW_POPULATION; i++) {
             selection_module->total_value_out[i](total_value_out_sorter[i]);
@@ -136,6 +155,7 @@ SC_MODULE(EvolutionaryAlgorithm) {
                 reproduction_module->population_in[i][j](reproduced_in[i][j]);
             }
         }
+        reproduction_module->clk(clk[4]);
 
 
         //reproduction out
@@ -154,8 +174,10 @@ SC_MODULE(EvolutionaryAlgorithm) {
 
             }
             crossover_module[i / 2]->crossover_point_in(index_signal);
-        }
+            crossover_module[i / 2]->clk(clk[5]);
 
+        }
+        
         
 
         //crossover out
@@ -172,6 +194,7 @@ SC_MODULE(EvolutionaryAlgorithm) {
                 mutation_module->population_in[i][j](reproduced_in[i][j]);
             }
         }
+        mutation_module->clk(clk[6]);
         
         //mutation out
         for (int i = 0; i < NEW_POPULATION; i++) {
@@ -207,11 +230,7 @@ SC_MODULE(EvolutionaryAlgorithm) {
         }       
 
         SC_METHOD(kill_algorithm);
-        for (int i = 0; i < NEW_POPULATION; i++) {
-            for (int j = 0; j < SOLUTION_SIZE; j++) {
-               sensitive << selected_population[i][j];
-            }
-        }
+        sensitive << clk[3]; 
     }
 };
 

@@ -3,6 +3,7 @@
 
 int sc_main(int argc, char* argv[]) {
 
+    sc_clock main_clk("main_clk", 1, SC_MS); 
 
     sc_signal<double> weights[SOLUTION_SIZE];
     sc_signal<double> values[SOLUTION_SIZE];
@@ -24,6 +25,8 @@ int sc_main(int argc, char* argv[]) {
         evolutionary_algorithm.best_solution[i](best_solution[i]);
     }
 
+    evolutionary_algorithm.main_clk(main_clk);
+    
     sc_start();
 
     cout << "Best Solution: ";

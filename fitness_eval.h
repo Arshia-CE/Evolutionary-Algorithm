@@ -8,6 +8,8 @@ SC_MODULE(FitnessEvaluator) {
     sc_in<double> weights_in[SOLUTION_SIZE];
     sc_in<double> values_in[SOLUTION_SIZE];
 
+    sc_in <bool> clk;
+
     sc_out<double> total_value_out[NEW_POPULATION];
     sc_out<double> solution_out[NEW_POPULATION][SOLUTION_SIZE];
 
@@ -23,6 +25,7 @@ SC_MODULE(FitnessEvaluator) {
                 population_temp[i][j] = solution_in[i][j].read();
             }
         }
+
 
         for (int i = 0; i < NEW_POPULATION; i++) {
             for (int j = 0; j < SOLUTION_SIZE; j++) {
@@ -42,20 +45,17 @@ SC_MODULE(FitnessEvaluator) {
                 total_value[i] += values_in[j]->read() * solution_in[i][j]->read();
                 total_weight[i] += weights_in[j]->read() * solution_in[i][j]->read();
             }
-            if (total_weight[i] > MAX_SIZE) {
-                total_value[i] = -1.0;
-            }
 
         }
 
+        // TODO : improve
         for (int i = 0; i < NEW_POPULATION; i++) {
-            if (total_value[i] == -1.0) {
-                for (int j = 0; j < SOLUTION_SIZE; j++) {
-                    population_temp[i][j] = 0.0;
+            if (total_weight[i] > MAX_SIZE) {
+                total_value[i] = 0.0;
                 }
-                total_value[i] == -1.0;
-            }
         }
+
+
 
         for (int i = 0; i < NEW_POPULATION; i++) {
             total_value_out[i].write(total_value[i]);
@@ -69,13 +69,6 @@ SC_MODULE(FitnessEvaluator) {
 
     SC_CTOR(FitnessEvaluator) {
         SC_METHOD(evaluate_solution);
-        for (int i = 0; i < NEW_POPULATION; i++) {
-            for (int j = 0; j < SOLUTION_SIZE; j++) {
-                sensitive << solution_in[i][j];
-            }
-        }
-        for (int i = 0; i < SOLUTION_SIZE; i++){
-            sensitive << weights_in[i] << values_in[i];
-        }
+        sensitive << clk.pos();
     }
 };
